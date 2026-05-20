@@ -1,16 +1,16 @@
-import { useRouteError } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useRouteError } from 'react-router-dom';
+import LinkButton from './LinkButton';
 
 function Error() {
-  const navigate = useNavigate();
-  const err = useRouteError();
-  console.log(err);
+  const error = useRouteError();
+  console.log(error);
 
   return (
     <div>
       <h1>Something went wrong 😢</h1>
-      <p>{err.data || err.message}</p>
-      <button onClick={() => navigate(-1)}>&larr; Go back</button>
+      <p>{error.data || error.message}</p>
+
+      <LinkButton to="-1">&larr; Go back</LinkButton>
     </div>
   );
 }
