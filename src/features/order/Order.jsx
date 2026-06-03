@@ -9,9 +9,17 @@ import {
   formatCurrency,
   formatDate,
 } from "../../utils/helpers";
+import { useFetcher } from "react-router-dom";
+import { useEffect } from "react";
+import UpdateOrder from "./UpdateOrder";
 
 function Order() {
   const order = useLoaderData();
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    if (!fetcher.data && fetcher.state === "idle") fetcher.load("/menu");
+  }, [fetcher]);
 
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
@@ -56,7 +64,14 @@ function Order() {
 
       <ul className="dive-stone-200 divide-y border-t border-b">
         {cart.map((item) => (
-          <OrderItem item={item} key={item.pizzaId} />
+          <OrderItem
+            item={item}
+            key={item.pizzaId}
+            isLoadingIngredients={fetcher.state === "loading"}
+            ingredients={
+              fetcher.data?.find((el) => el.id === item.pizzaId).ingredients
+            }
+          />
         ))}
       </ul>
 
@@ -73,6 +88,7 @@ function Order() {
           To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}
         </p>
       </div>
+      {!priority && <UpdateOrder order={order} />}
     </div>
   );
 }
